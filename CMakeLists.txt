@@ -25,6 +25,7 @@ project (velocity_cpp)
 # Create a sources variable with a link to all cpp files to compile
 set(SOURCES
     src/main.cpp
+    src/logger.cpp
     vendor/glad.c
 )
 
@@ -33,6 +34,7 @@ add_executable(${CMAKE_PROJECT_NAME} ${SOURCES})
 
 # Set the directories that should be included in the build command for this target
 # when running g++ these will be included as -I/directory/path/
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/src/include)
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/vendor/include)
 
 # Set the directories that should be linked in the build command for this target
