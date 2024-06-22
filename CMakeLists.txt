@@ -1,5 +1,5 @@
-# This cmake file is modified version based on the one found in the link below.
-#   - https://github.com/ttroy50/cmake-examples/tree/master/01-basic/B-hello-headers
+# This cmake file is modified version based on the examples found in the link below.
+#   - https://github.com/ttroy50/cmake-examples
 
 # Set the minimum version of CMake that can be used
 # To find the cmake version run
@@ -22,11 +22,11 @@ set(CMAKE_CXX_STANDARD 14)
 # Set the project name
 project (velocity_cpp)
 
+add_subdirectory(engine)
+
 # Create a sources variable with a link to all cpp files to compile
 set(SOURCES
-    src/main.cpp
-    src/logger.cpp
-    vendor/glad.c
+    testapp/main.cpp
 )
 
 # Add an executable with the above sources
@@ -34,18 +34,7 @@ add_executable(${CMAKE_PROJECT_NAME} ${SOURCES})
 
 # Set the directories that should be included in the build command for this target
 # when running g++ these will be included as -I/directory/path/
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/src/include)
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/vendor/include)
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/testapp/include)
 
-# Set the directories that should be linked in the build command for this target
-# when running g++ these will be included as -L/directory/path/
-
-if (${CMAKE_HOST_SYSTEM_NAME} EQUAL "Windows")
-    # Windows only
-    target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/vendor/lib/glfw-win)
-    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE glew32 glfw3 opengl32 glu32 gdi32)
-else()
-    # Linux only
-    target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/vendor/lib/glfw-linux)
-    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE glfw3 GL m X11 pthread Xi Xrandr dl)
-endif()
+# This executable with 'libengine' or 'libvelocity'
+target_link_libraries(${PROJECT_NAME} engine)
