@@ -17,7 +17,46 @@ struct Vec2 {
     Vec2() = delete;
     Vec2(float x, float y);
 
+    Vec2 operator+(const Vec2& other) const;
+    Vec2 operator-(const Vec2& other) const;
+    Vec2 operator*(const Vec2& other) const;
+    Vec2 operator*(const float factor) const;
+    Vec2 operator/(const Vec2& other) const;
+
+    float Dot(const Vec2 other) const;
+    float Length() const;
+    float SqrLength() const;
+    bool Equals(const Vec2& other) const;
+
+    static Vec2 Lerp(const Vec2 a, const Vec2 b, float t);
+    static float Distance(const Vec2 a, const Vec2 b);
+
+    inline static Vec2 Zero() {
+        return Vec2(0.0f, 0.0f);
+    }
+
+    inline static Vec2 One() {
+        return Vec2(1.0f, 1.0f);
+    }
+
+    inline static Vec2 Up() {
+        return Vec2(0.0f, 1.0f);
+    }
+
+    inline static Vec2 Down() {
+        return Vec2(0.0f, -1.0f);
+    }
+
+    inline static Vec2 Left() {
+        return Vec2(-1.0f, 0.0f);
+    }
+
+    inline static Vec2 Right() {
+        return Vec2(1.0f, 0.0f);
+    }
+
   public:
+
     float X;
     float Y;
 };
@@ -26,7 +65,6 @@ struct Color {
   public:
     Color() = delete;
     Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-    Color(float r, float g, float b, float a);
 
   public:
     uint8_t R;
