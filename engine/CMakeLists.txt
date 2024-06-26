@@ -11,6 +11,7 @@ set(SOURCES
     OpenGL/src/renderer.cpp
     OpenGL/src/shader.cpp
     OpenGL/src/window.cpp
+    OpenGL/src/texture.cpp
     OpenGL/vendor/glad.c
     util/logger.cpp
     util/util.cpp

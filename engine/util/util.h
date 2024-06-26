@@ -51,7 +51,7 @@ struct Vec2 {
 
 struct Color {
   public:
-    Color() = delete;
+    Color() = default;
     Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
     Color SetOpacity(float new_alpha) const;

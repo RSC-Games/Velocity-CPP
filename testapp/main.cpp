@@ -1,4 +1,5 @@
 #include "renderer.h"
+#include "texture.h"
 #include "window.h"
 
 // TODO: this should be removed. it's bad to have this here.
@@ -10,6 +11,9 @@ int main() {
 
     GLWindow w = GLWindow(config);
     GLRenderer rend = GLRenderer(w.GetWidth(), w.GetHeight());
+
+    GLImage img = GLImage::FromColor(100, 100, Color::Orange());
+    GLTexture tex = GLTexture(img);
 
     float r = 0.0f;
     while (!w.WindowShouldClose()) {
