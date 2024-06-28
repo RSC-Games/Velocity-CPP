@@ -9,26 +9,27 @@ namespace Velocity {
 
 GLImage::GLImage(Color *data, int width, int height)
     : m_Pixels(data), m_Width(width), m_Height(height) {
-    LogInfo("Successfully created image with dimensions (%d x %d)", m_Width, m_Height);
+    LogInfo("Successfully created image with dimensions (%d x %d)", m_Width,
+            m_Height);
 }
 
-GLImage::GLImage(const char *path) {
+GLImage GLImage::LoadFromFile(const char *path) {
     int width, height;
     stbi_uc *data = stbi_load(path, &width, &height, nullptr, STBI_rgb_alpha);
     if (data == nullptr) {
         LogError("Couldn't load image -> '%s'", path);
-        return;
+        return GLImage(nullptr, 0, 0);
     }
-    m_Width = width;
-    m_Height = height;
-    Color *pixels = new Color[m_Width * m_Height];
-    for (int i = 0; i < m_Width * m_Height; i++) {
+    Color *pixels = new Color[width * height];
+    for (int i = 0; i < width * height; i++) {
         pixels[i] = Color(data[i * 4 + 0], data[i * 4 + 1], data[i * 4 + 2],
                           data[i * 4 + 3]);
     }
     LogInfo("Loaded image from '%s'", path);
 
     stbi_image_free(data);
+
+    return GLImage(pixels, width, height);
 }
 
 GLImage GLImage::FromColor(int width, int height, const Color color) {
@@ -36,7 +37,8 @@ GLImage GLImage::FromColor(int width, int height, const Color color) {
     for (int i = 0; i < width * height; i++) {
         data[i] = color;
     }
-    LogInfo("Initialized image with color -> (%d, %d, %d, %d)", color.R, color.G, color.B, color.A);
+    LogInfo("Initialized image with color -> (%d, %d, %d, %d)", color.R,
+            color.G, color.B, color.A);
 
     return GLImage(data, width, height);
 }
@@ -50,13 +52,23 @@ Color GLImage::GetColor(int x, int y) const {
     return m_Pixels[i];
 }
 
-Color *GLImage::GetData() const { return m_Pixels; }
+Color *GLImage::GetData() const {
+    return m_Pixels;
+}
 
-GLImage::~GLImage() { delete[] m_Pixels; }
+void GLImage::Unload(GLImage& img) { delete[] img.GetData(); }
 
-GLTexture::GLTexture(const char *path) { GLTexture(GLImage(path)); }
+GLTexture::GLTexture(const char *path) {
+    GLImage img = GLImage::LoadFromFile(path);
+    Load(img);
+    GLImage::Unload(img);
+}
 
-GLTexture::GLTexture(GLImage image) {
+GLTexture::GLTexture(GLImage img) {
+    Load(img);
+}
+
+void GLTexture::Load(GLImage img) {
     GLuint textureID;
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
@@ -71,17 +83,21 @@ GLTexture::GLTexture(GLImage image) {
                     GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.GetWidth(), image.GetHeight(),
-                 0, GL_RGBA, GL_UNSIGNED_BYTE, image.GetData());
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.GetWidth(), img.GetHeight(),
+                 0, GL_RGBA, GL_UNSIGNED_BYTE, img.GetData());
     // glGenerateMipmap(GL_TEXTURE_2D);
 
     m_Id = textureID;
-    m_Width = image.GetWidth();
-    m_Height = image.GetHeight();
+    m_Width = img.GetWidth();
+    m_Height = img.GetHeight();
 }
 
-GLTexture::~GLTexture() {
-    glDeleteTextures(1, &m_Id);
-}
+GLTexture::~GLTexture() { glDeleteTextures(1, &m_Id); }
+
+int GLTexture::GetId() const { return m_Id; }
+
+int GLTexture::GetWidth() const { return m_Width; }
+
+int GLTexture::GetHeight() const { return m_Height; }
 
 } // namespace Velocity

@@ -66,6 +66,9 @@ struct Color {
     inline static Color Magenta() { return Color(255, 0, 255, 255); }
     inline static Color Cyan() { return Color(0, 255, 255, 255); }
     inline static Color Orange() { return Color(255, 127, 0, 255); }
+    inline static Color White() { return Color(255, 255, 255, 255); }
+    inline static Color Black() { return Color(0, 0, 0, 255); }
+    inline static Color Blank() { return Color(0, 0, 0, 0); }
 
   public:
     uint8_t R;

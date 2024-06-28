@@ -7,18 +7,20 @@ using namespace Velocity;
 
 int main() {
     GLWindowConfig config = GLWindowConfig(800, 600, "Testing");
-    config.Resizable = true;
+    config.Resizable = false;
 
     GLWindow w = GLWindow(config);
     GLRenderer rend = GLRenderer(w.GetWidth(), w.GetHeight());
 
-    GLImage img = GLImage::FromColor(100, 100, Color::Orange());
+    // GLImage img = GLImage::FromColor(100, 100, Color::Orange());
+    GLImage img = GLImage::LoadFromFile("../resources/images/logo-256.png");
     GLTexture tex = GLTexture(img);
+    GLImage::Unload(img);
 
-    float r = 0.0f;
     while (!w.WindowShouldClose()) {
-        r += 0.0001;
-        rend.Clear(Color(r, r, 1.0f, 1.0f));
+        rend.Clear(Color(30, 30, 30, 255));
+        rend.DrawTexture(tex, 100, 100, tex.GetWidth(), tex.GetHeight());
+        rend.DrawTexture(tex, 500, 100, tex.GetWidth(), tex.GetHeight());
 
         rend.Present(w);
     }

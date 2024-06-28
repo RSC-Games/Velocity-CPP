@@ -15,6 +15,7 @@ struct GLShader {
     ~GLShader();
 
     void LoadDefaults();
-    void Bind();
+    void Bind() const;
+    int GetProgramId() const;
 };
 } // namespace Velocity

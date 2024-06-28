@@ -6,7 +6,7 @@
 #include "logger.h"
 
 namespace Velocity {
-static LogLevel currentLevel = LogLevel::Debug;
+static LogLevel currentLevel = LogLevel::Info;
 
 void SetLogLevel(LogLevel level) { currentLevel = level; }
 

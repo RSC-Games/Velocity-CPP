@@ -6,15 +6,14 @@ namespace Velocity {
 
 class GLImage {
   public:
-    GLImage(const char *path);
-    ~GLImage();
-
     int GetWidth() const;
     int GetHeight() const;
     Color GetColor(int x, int y) const;
     Color *GetData() const;
 
+    static GLImage LoadFromFile(const char *path);
     static GLImage FromColor(int width, int height, Color color);
+    static void Unload(GLImage& img);
 
   private:
     GLImage(Color *data, int width, int height);
@@ -31,10 +30,13 @@ class GLTexture {
     GLTexture(GLImage img);
     ~GLTexture();
 
+    int GetId() const;
     int GetWidth() const;
     int GetHeight() const;
 
   private:
+    void Load(GLImage img);
+
     unsigned int m_Id;
     int m_Width;
     int m_Height;
