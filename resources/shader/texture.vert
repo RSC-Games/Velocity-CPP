@@ -9,8 +9,7 @@ out vec4 color;
 out vec2 texCoord;
 out float texID;
 
-void main()
-{
+void main() {
     color = in_Color;
     texCoord = in_TexCoord;
     texID = in_TexID;
