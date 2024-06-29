@@ -15,6 +15,7 @@ GLImage::GLImage(Color *data, int width, int height)
 
 GLImage GLImage::LoadFromFile(const char *path) {
     int width, height;
+    stbi_set_flip_vertically_on_load(1);
     stbi_uc *data = stbi_load(path, &width, &height, nullptr, STBI_rgb_alpha);
     if (data == nullptr) {
         LogError("Couldn't load image -> '%s'", path);
@@ -52,9 +53,7 @@ Color GLImage::GetColor(int x, int y) const {
     return m_Pixels[i];
 }
 
-Color *GLImage::GetData() const {
-    return m_Pixels;
-}
+Color *GLImage::GetData() const { return m_Pixels; }
 
 void GLImage::Unload(GLImage& img) { delete[] img.GetData(); }
 
@@ -64,9 +63,7 @@ GLTexture::GLTexture(const char *path) {
     GLImage::Unload(img);
 }
 
-GLTexture::GLTexture(GLImage img) {
-    Load(img);
-}
+GLTexture::GLTexture(GLImage img) { Load(img); }
 
 void GLTexture::Load(GLImage img) {
     GLuint textureID;
@@ -74,27 +71,31 @@ void GLTexture::Load(GLImage img) {
     glBindTexture(GL_TEXTURE_2D, textureID);
 
     // set the texture wrapping parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
-                    GL_REPEAT); // set texture wrapping to GL_REPEAT (default
-                                // wrapping method)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    // set texture wrapping to GL_REPEAT (default wrapping method)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     // set texture filtering parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                     GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.GetWidth(), img.GetHeight(),
-                 0, GL_RGBA, GL_UNSIGNED_BYTE, img.GetData());
-    // glGenerateMipmap(GL_TEXTURE_2D);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.GetWidth(), img.GetHeight(), 0,
+                 GL_RGBA, GL_UNSIGNED_BYTE, img.GetData());
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     m_Id = textureID;
     m_Width = img.GetWidth();
     m_Height = img.GetHeight();
 }
 
-GLTexture::~GLTexture() { glDeleteTextures(1, &m_Id); }
+void GLTexture::Unload() {
+    LogInfo("Texture[id:%d] has been deleted!", m_Id);
+    glDeleteTextures(1, &m_Id);
+}
 
-int GLTexture::GetId() const { return m_Id; }
+unsigned int GLTexture::GetId() const { return m_Id; }
 
 int GLTexture::GetWidth() const { return m_Width; }
 

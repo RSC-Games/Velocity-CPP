@@ -9,21 +9,27 @@ int main() {
     GLWindowConfig config = GLWindowConfig(800, 600, "Testing");
     config.Resizable = false;
 
-    GLWindow w = GLWindow(config);
-    GLRenderer rend = GLRenderer(w.GetWidth(), w.GetHeight());
+    GLWindow window = GLWindow(config);
+    GLRenderer rend = GLRenderer(window.GetWidth(), window.GetHeight());
 
-    // GLImage img = GLImage::FromColor(100, 100, Color::Orange());
-    GLImage img = GLImage::LoadFromFile("../resources/images/logo-256.png");
+    GLImage img = GLImage::LoadFromFile("../resources/images/imageA.png");
     GLTexture tex = GLTexture(img);
     GLImage::Unload(img);
 
-    while (!w.WindowShouldClose()) {
+    while (!window.WindowShouldClose()) {
         rend.Clear(Color(30, 30, 30, 255));
-        rend.DrawTexture(tex, 100, 100, tex.GetWidth(), tex.GetHeight());
-        rend.DrawTexture(tex, 500, 100, tex.GetWidth(), tex.GetHeight());
 
-        rend.Present(w);
+        int width = 50, height = 50;
+        for (int r = 0; r < 10; r++) {
+            for (int c = 0; c < 10; c++) {
+                rend.DrawTexture(tex, 25 + c * (width + width / 2), 25 + r * (height + height / 2), width, height);
+            }
+        }
+
+        rend.Present(window);
     }
+
+    tex.Unload();
 
     return 0;
 }

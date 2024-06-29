@@ -28,13 +28,16 @@ class GLTexture {
     GLTexture() = delete;
     GLTexture(const char *path);
     GLTexture(GLImage img);
-    ~GLTexture();
 
-    int GetId() const;
+    unsigned int GetId() const;
     int GetWidth() const;
     int GetHeight() const;
 
+    void Unload();
+
   private:
+
+    void deleteTex() const;
     void Load(GLImage img);
 
     unsigned int m_Id;

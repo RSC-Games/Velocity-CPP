@@ -3,7 +3,6 @@
 #include "shader.h"
 #include <cstdio>
 #include <cstring>
-#include <cwchar>
 
 #define INFO_LOG_BUF_LEN 512
 

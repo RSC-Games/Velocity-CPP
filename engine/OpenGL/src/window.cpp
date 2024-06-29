@@ -38,7 +38,7 @@ static void MessageCallback(GLenum source,
 GLWindow::GLWindow(GLWindowConfig config)
     : m_Width(config.Width), m_Height(config.Height),
       m_Title(config.Title.c_str()), m_Window(nullptr) {
-    if (!glfwInit()) {
+    if (glfwInit() != GLFW_TRUE) {
         LogFatal("Unable to initialize glfw");
     }
 
@@ -84,9 +84,6 @@ GLWindow::GLWindow(GLWindowConfig config)
     // glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    glEnable(GL_DEBUG_OUTPUT);
-    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 }
 
 GLWindow::~GLWindow() {

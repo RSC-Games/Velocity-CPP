@@ -1,4 +1,5 @@
 #include "glad/glad.h"
+#include "glfw-linux/glfw3.h"
 #include "glm/ext/vector_float3.hpp"
 #include "glm/ext/vector_float4.hpp"
 #include "logger.h"
@@ -7,7 +8,7 @@
 #include "util.h"
 
 namespace Velocity {
-const int MAX_QUAD_COUNT = 2;
+const int MAX_QUAD_COUNT = 20;
 const int MAXIMUM_VERTEX_COUNT = MAX_QUAD_COUNT * 4;
 const int MAXIMUM_INDEX_COUNT = MAX_QUAD_COUNT * 6;
 
@@ -49,7 +50,7 @@ void GLRenderer::DrawTexture(GLTexture tex, int x, int y, int w, int h) {
 
     float texture_index = 0.0f;
     for (size_t i = 1; i < rd.textureNextSlot; i++) {
-        if (rd.textureSlots[i] == tex.GetId()) {
+        if (rd.textureSlots[i] == (int)tex.GetId()) {
             texture_index = (float)i;
             break;
         }
@@ -101,11 +102,12 @@ void GLRenderer::Clear(Color color) {
 }
 
 void GLRenderer::Present(GLWindow& window) {
-    // if (rd.indexCount > 0) {
-    //     batchEnd();
-    //     batchFlush();
-    //     batchBegin();
-    // }
+    if (rd.indexCount > 0) {
+        batchEnd();
+        batchFlush();
+        batchBegin();
+    }
+
     glfwSwapBuffers(window.GetWindowHandle());
     glfwPollEvents();
 }
