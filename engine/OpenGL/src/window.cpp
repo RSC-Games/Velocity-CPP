@@ -1,7 +1,9 @@
 #include "glad/glad.h"
 #include "glfw-linux/glfw3.h"
+
 #include "logger.h"
 #include "util.h"
+#include <GL/glext.h>
 #include "window.h"
 
 namespace Velocity {
@@ -15,16 +17,36 @@ static void frameResizeCallback(GLFWwindow *window, int width, int height) {
     LogDebug("RESIZE: (%d, %d)", width, height);
 }
 
+static void MessageCallback(GLenum source,
+                     GLenum type,
+                     GLuint id,
+                     GLenum severity,
+                     GLsizei length,
+                     const GLchar* message,
+                     const void* userParam)
+{
+    (void) source;
+    (void) id;
+    (void) length;
+    (void) userParam;
+    fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
+            (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
+            type, severity, message);
+}
+
+
 GLWindow::GLWindow(GLWindowConfig config)
     : m_Width(config.Width), m_Height(config.Height),
       m_Title(config.Title.c_str()), m_Window(nullptr) {
-    if (!glfwInit()) {
+    if (glfwInit() != GLFW_TRUE) {
         LogFatal("Unable to initialize glfw");
     }
 
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_CONTEXT_DEBUG, GLFW_TRUE);
+
     glfwWindowHint(GLFW_RESIZABLE, config.Resizable);
     glfwWindowHint(GLFW_VISIBLE, config.Visible);
     // TODO: handle fullscreen config
@@ -41,6 +63,8 @@ GLWindow::GLWindow(GLWindowConfig config)
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         LogFatal("Failed to initialize GLAD.");
     }
+
+    glfwSwapInterval(1);
 
     LogInfo("Device Information\n\tGPU: %s", glGetString(GL_VERSION));
     LogInfo("Window initialized with these parameter");
@@ -60,8 +84,6 @@ GLWindow::GLWindow(GLWindowConfig config)
     // glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    // TODO: intialize a default shader
 }
 
 GLWindow::~GLWindow() {

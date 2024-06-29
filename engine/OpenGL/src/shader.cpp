@@ -92,7 +92,9 @@ void GLShader::LoadDefaults() {
     }
 }
 
-void GLShader::Bind() { glUseProgram(m_ProgramId); }
+void GLShader::Bind() const { glUseProgram(m_ProgramId); }
+
+int GLShader::GetProgramId() const { return m_ProgramId;}
 
 // WARNING: This function allocates memory
 static char *readEntireFile(const char *path) {
