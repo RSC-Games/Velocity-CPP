@@ -37,7 +37,7 @@ target_include_directories(${PROJECT_NAME}
 if (WIN32)
     # Windows only
     target_link_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/OpenGL/vendor/lib/glfw-win)
-    target_link_libraries(${PROJECT_NAME} PUBLIC glew32 glfw3 opengl32 glu32 gdi32)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glfw3 opengl32 glu32 gdi32)
 else()
     # Linux only
     target_link_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/OpenGL/vendor/lib/glfw-linux)

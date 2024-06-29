@@ -66,7 +66,9 @@ GLWindow::GLWindow(GLWindowConfig config)
 
     glfwSwapInterval(1);
 
-    LogInfo("Device Information\n\tGPU: %s", glGetString(GL_VERSION));
+    LogInfo("Device Information");
+    LogInfo("\tGPU: %s", glGetString(GL_RENDERER));
+    LogInfo("\tOpenGL Version: %s", glGetString(GL_VERSION));
     LogInfo("Window initialized with these parameter");
     LogInfo("    Width: . . . . . . . %d", config.Width);
     LogInfo("    Height:  . . . . . . %d", config.Height);
