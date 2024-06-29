@@ -12,8 +12,8 @@ $ make
 
 ## Quickstart (Windows + MSYS2)
 ```
-PS mkdir build
-PS cd build
-PS cmake .. -G "MSYS Makefiles"
-PS make
+PS> mkdir build
+PS> cd build
+PS> cmake .. -G "MSYS Makefiles"
+PS> make
 ```
