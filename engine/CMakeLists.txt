@@ -33,7 +33,8 @@ target_include_directories(${PROJECT_NAME}
 
 # Set the directories that should be linked in the build command for this target
 # when running the compiler these will be included as -L/directory/path/
-if (${CMAKE_HOST_SYSTEM_NAME} EQUAL "Windows")
+# if (${CMAKE_HOST_SYSTEM_NAME} EQUAL "Windows")
+if (WIN32)
     # Windows only
     target_link_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/OpenGL/vendor/lib/glfw-win)
     target_link_libraries(${PROJECT_NAME} PUBLIC glew32 glfw3 opengl32 glu32 gdi32)
