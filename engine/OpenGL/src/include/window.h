@@ -14,7 +14,7 @@ namespace Velocity {
 struct GLWindowConfig {
     int Width;
     int Height;
-    const std::string& Title;
+    const char *Title;
     bool Resizable;
     // TODO: what does fullscreen mean?
     // Does it mean fullscreen when created or always fullscreen
@@ -23,7 +23,7 @@ struct GLWindowConfig {
     bool Visible;
 
     GLWindowConfig() = delete;
-    GLWindowConfig(int width, int height, const std::string& title);
+    GLWindowConfig(int width, int height, const char *title);
 };
 
 class GLWindow {

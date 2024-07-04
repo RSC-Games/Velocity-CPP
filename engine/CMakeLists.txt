@@ -41,5 +41,6 @@ if (WIN32)
 else()
     # Linux only
     target_link_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/OpenGL/vendor/lib/glfw-linux)
-    target_link_libraries(${PROJECT_NAME} PUBLIC libglfw3.a GL m X11 pthread Xi Xrandr dl)
+    # target_link_libraries(${PROJECT_NAME} PUBLIC libglfw3.a GL m X11 pthread Xi Xrandr dl)
+    target_link_libraries(${PROJECT_NAME} PUBLIC libglfw3.a GL m X11 pthread dl)
 endif()

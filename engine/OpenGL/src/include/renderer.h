@@ -1,8 +1,5 @@
 #pragma once
 
-#include "glm/ext/vector_float2.hpp"
-#include "glm/ext/vector_float3.hpp"
-#include "glm/ext/vector_float4.hpp"
 #include "shader.h"
 #include "texture.h"
 #include "window.h"
@@ -10,7 +7,6 @@
 #include "glm/vec2.hpp"
 #include "glm/vec3.hpp"
 #include "glm/vec4.hpp"
-#include <cwchar>
 
 namespace Velocity {
 
@@ -32,7 +28,7 @@ struct VertexInfo {
 };
 
 struct RenderData {
-    GLuint quadVao, quadVbo, quadIbo;
+    unsigned int quadVao, quadVbo, quadIbo;
 
     // Quad information
     VertexInfo *verts;

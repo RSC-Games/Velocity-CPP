@@ -3,11 +3,12 @@
 
 #include "logger.h"
 #include "util.h"
-#include <GL/glext.h>
 #include "window.h"
 
+#include <string>
+
 namespace Velocity {
-GLWindowConfig::GLWindowConfig(int width, int height, const std::string& title)
+GLWindowConfig::GLWindowConfig(int width, int height, const char *title)
     : Width(width), Height(height), Title(title), Resizable(false),
       Visible(true) {}
 
@@ -16,24 +17,6 @@ static void frameResizeCallback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
     LogDebug("RESIZE: (%d, %d)", width, height);
 }
-
-static void MessageCallback(GLenum source,
-                     GLenum type,
-                     GLuint id,
-                     GLenum severity,
-                     GLsizei length,
-                     const GLchar* message,
-                     const void* userParam)
-{
-    (void) source;
-    (void) id;
-    (void) length;
-    (void) userParam;
-    fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
-            (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
-            type, severity, message);
-}
-
 
 GLWindow::GLWindow(GLWindowConfig config)
     : m_Width(config.Width), m_Height(config.Height),
