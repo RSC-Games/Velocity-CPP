@@ -7,7 +7,7 @@
 #include "texture.h"
 #include "util.h"
 
-namespace Velocity {
+namespace nvogl {
 const int MAX_QUAD_COUNT = 20;
 const int MAXIMUM_VERTEX_COUNT = MAX_QUAD_COUNT * 4;
 const int MAXIMUM_INDEX_COUNT = MAX_QUAD_COUNT * 6;
@@ -222,4 +222,4 @@ VertexInfo::VertexInfo(glm::vec3 pos, glm::vec4 color, glm::vec2 tex_coords,
     : Position(pos), Color(color), TexCoords(tex_coords),
       TextureIndex(texture_index) {}
 
-} // namespace Velocity
+} // namespace nvogl

@@ -7,7 +7,7 @@
 #endif
 
 
-namespace Velocity {
+namespace nvogl {
 struct GLShader {
     int m_ProgramId;
 
@@ -18,4 +18,4 @@ struct GLShader {
     void Bind() const;
     int GetProgramId() const;
 };
-} // namespace Velocity
+} // namespace nvogl

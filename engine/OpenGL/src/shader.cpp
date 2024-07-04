@@ -6,7 +6,7 @@
 
 #define INFO_LOG_BUF_LEN 512
 
-namespace Velocity {
+namespace nvogl {
 static const char *DEFAULT_VERT_PATH = "../resources/shader/texture.vert";
 static const char *DEFAULT_FRAG_PATH = "../resources/shader/texture.frag";
 
@@ -116,4 +116,4 @@ static char *readEntireFile(const char *path) {
 
     return result;
 }
-} // namespace Velocity
+} // namespace nvogl

@@ -3,7 +3,7 @@
 #include "window.h"
 
 // TODO: this should be removed. it's bad to have this here.
-using namespace Velocity;
+using namespace nvogl;
 
 int main() {
     GLWindowConfig config = GLWindowConfig(800, 600, "Testing");

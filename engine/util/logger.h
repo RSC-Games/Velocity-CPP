@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Velocity {
+namespace nvogl {
 
 #define VELOCITY_COLOR_PRINT
 
@@ -12,4 +12,4 @@ void LogWarning(const char *formatStr, ...);
 void LogError(const char *formatStr, ...);
 void LogFatal(const char *formatStr, ...);
 
-} // namespace Velocity
+} // namespace nvogl

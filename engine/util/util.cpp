@@ -2,7 +2,7 @@
 
 #include "util.h"
 
-namespace Velocity {
+namespace nvogl {
 Vec2i::Vec2i(int x, int y) : X(x), Y(y) {}
 
 Vec2::Vec2(float x, float y) : X(x), Y(y) {}
@@ -62,4 +62,4 @@ Color Color::FromHexValue(int hex) {
     return Color(r, g, b, a);
 }
 
-} // namespace Velocity
+} // namespace nvogl

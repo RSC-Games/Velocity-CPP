@@ -8,7 +8,7 @@
 #include "glm/vec3.hpp"
 #include "glm/vec4.hpp"
 
-namespace Velocity {
+namespace nvogl {
 
 extern const int MAX_QUAD_COUNT;
 extern const int MAXIMUM_VERTEX_COUNT;
@@ -67,4 +67,4 @@ class GLRenderer {
     GLShader m_Shader;
     RenderData rd;
 };
-} // namespace Velocity
+} // namespace nvogl

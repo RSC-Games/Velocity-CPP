@@ -2,7 +2,7 @@
 
 #include "util.h"
 
-namespace Velocity {
+namespace nvogl {
 
 class GLImage {
   public:
@@ -45,4 +45,4 @@ class GLTexture {
     int m_Height;
 };
 
-} // namespace Velocity
+} // namespace nvogl

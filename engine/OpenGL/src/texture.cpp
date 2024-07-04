@@ -5,7 +5,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
-namespace Velocity {
+namespace nvogl {
 
 GLImage::GLImage(Color *data, int width, int height)
     : m_Pixels(data), m_Width(width), m_Height(height) {
@@ -101,4 +101,4 @@ int GLTexture::GetWidth() const { return m_Width; }
 
 int GLTexture::GetHeight() const { return m_Height; }
 
-} // namespace Velocity
+} // namespace nvogl

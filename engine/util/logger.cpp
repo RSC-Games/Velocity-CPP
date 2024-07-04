@@ -5,7 +5,7 @@
 
 #include "logger.h"
 
-namespace Velocity {
+namespace nvogl {
 static LogLevel currentLevel = LogLevel::Info;
 
 void SetLogLevel(LogLevel level) { currentLevel = level; }
@@ -112,4 +112,4 @@ void LogFatal(const char *formatStr, ...) {
     va_end(args);
 }
 
-} // namespace Velocity
+} // namespace nvogl

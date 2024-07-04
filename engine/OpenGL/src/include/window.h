@@ -9,7 +9,7 @@
 #endif
 #include "util.h"
 
-namespace Velocity {
+namespace nvogl {
 
 struct GLWindowConfig {
     int Width;
@@ -51,4 +51,4 @@ private:
     GLFWwindow *m_Window;
 };
 
-} // namespace Velocity
+} // namespace nvogl

@@ -5,9 +5,7 @@
 #include "util.h"
 #include "window.h"
 
-#include <string>
-
-namespace Velocity {
+namespace nvogl {
 GLWindowConfig::GLWindowConfig(int width, int height, const char *title)
     : Width(width), Height(height), Title(title), Resizable(false),
       Visible(true) {}
@@ -20,7 +18,7 @@ static void frameResizeCallback(GLFWwindow *window, int width, int height) {
 
 GLWindow::GLWindow(GLWindowConfig config)
     : m_Width(config.Width), m_Height(config.Height),
-      m_Title(config.Title.c_str()), m_Window(nullptr) {
+      m_Title(config.Title), m_Window(nullptr) {
     if (glfwInit() != GLFW_TRUE) {
         LogFatal("Unable to initialize glfw");
     }
@@ -55,7 +53,7 @@ GLWindow::GLWindow(GLWindowConfig config)
     LogInfo("Window initialized with these parameter");
     LogInfo("    Width: . . . . . . . %d", config.Width);
     LogInfo("    Height:  . . . . . . %d", config.Height);
-    LogInfo("    Title: . . . . . . . %s", config.Title.c_str());
+    LogInfo("    Title: . . . . . . . %s", config.Title);
     LogInfo("    Resizable: . . . . . %s", config.Resizable ? "Yes" : "No");
     LogInfo("    Visible: . . . . . . %s", config.Visible ? "Yes" : "No");
     // LogInfo("    Fullscreen:  . . . . %s", config.Fullscreen ? "Yes" : "No");
@@ -102,4 +100,4 @@ double GLWindow::GetGLFWTime() const {
     return glfwGetTime();
 }
 
-} // namespace Velocity
+} // namespace nvogl

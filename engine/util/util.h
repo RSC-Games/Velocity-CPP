@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-namespace Velocity {
+namespace nvogl {
 struct Vec2i {
   public:
     Vec2i() = delete;
@@ -86,4 +86,4 @@ inline float Clampf(float min, float value, float max) {
     return res;
 }
 
-} // namespace Velocity
+} // namespace nvogl
