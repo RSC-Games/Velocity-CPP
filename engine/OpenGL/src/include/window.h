@@ -1,7 +1,5 @@
 #pragma once
 
-#include <string>
-
 #if WIN32
 #include "glfw-linux/glfw3.h"
 #else
@@ -26,6 +24,32 @@ struct GLWindowConfig {
     GLWindowConfig(int width, int height, const char *title);
 };
 
+// These keys are directly from GLFW.
+// Furthermore, not all keys are supported
+enum class Key {
+    Space = 32,
+
+    Minus = 45,
+    Period = 46,
+
+    A = 65, B, C, D, E, F, G,
+    H, I, J, K, L, M, N, O, P,
+    Q, R, S, T, U, V, W, X, Y, Z,
+
+    Escape = 256,
+    Enter = 257,
+};
+
+enum class Action {
+    Press,
+    Release,
+};
+
+struct KeyActionInfo {
+    Key key;
+    Action action;
+};
+
 class GLWindow {
 public:
     GLWindow() = delete;
@@ -41,6 +65,9 @@ public:
     Vec2 GetMousePosition() const;
     GLFWwindow *GetWindowHandle() const;
     double GetGLFWTime() const;
+
+    bool IsKeyPressed(Key key) const;
+    bool IsKeyReleased(Key key) const;
 
     bool WindowShouldClose() const;
 

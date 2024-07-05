@@ -2,6 +2,8 @@
 #include "texture.h"
 #include "window.h"
 
+#include "logger.h"
+
 // TODO: this should be removed. it's bad to have this here.
 using namespace nvogl;
 
@@ -17,6 +19,12 @@ int main() {
     GLImage::Unload(img);
 
     while (!window.WindowShouldClose()) {
+        if (window.IsKeyPressed(Key::Escape)) break;
+
+        if (window.IsKeyPressed(Key::Enter)) {
+            LogInfo("Enter key is pressed!");
+        }
+
         rend.Clear(Color(30, 30, 30, 255));
 
         int width = 50, height = 50;

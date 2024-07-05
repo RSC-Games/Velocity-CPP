@@ -5,6 +5,8 @@
 #include "util.h"
 #include "window.h"
 
+#include <vector>
+
 namespace nvogl {
 GLWindowConfig::GLWindowConfig(int width, int height, const char *title)
     : Width(width), Height(height), Title(title), Resizable(false),
@@ -14,6 +16,26 @@ static void frameResizeCallback(GLFWwindow *window, int width, int height) {
     (void)window;
     glViewport(0, 0, width, height);
     LogDebug("RESIZE: (%d, %d)", width, height);
+}
+
+static std::vector<KeyActionInfo> keyActions{};
+// TODO: handle modifiers like caps lock
+static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    (void) window;
+    (void) mods;
+    (void) scancode;
+
+    KeyActionInfo ka;
+    switch (action) {
+        case GLFW_PRESS:
+            ka.action = Action::Press;
+            break;
+        case GLFW_RELEASE:
+            ka.action = Action::Release;
+            break;
+    }
+    ka.key = (Key) key;
+    keyActions.push_back(ka);
 }
 
 GLWindow::GLWindow(GLWindowConfig config)
@@ -62,6 +84,8 @@ GLWindow::GLWindow(GLWindowConfig config)
 
     // Resize viewport upon window resize
     glfwSetFramebufferSizeCallback(m_Window, frameResizeCallback);
+    glfwSetKeyCallback(m_Window, keyCallback);
+
     glfwGetWindowSize(m_Window, &m_Width, &m_Height);
 
     // glEnable(GL_DEPTH_TEST);
@@ -98,6 +122,17 @@ GLFWwindow *GLWindow::GetWindowHandle() const { return m_Window; }
 
 double GLWindow::GetGLFWTime() const {
     return glfwGetTime();
+}
+
+bool GLWindow::IsKeyPressed(Key key) const {
+    for (size_t i = 0; i < keyActions.size(); i++) {
+        const KeyActionInfo ka = keyActions[i];
+        if (ka.key == key && ka.action == Action::Press) {
+            keyActions.erase(keyActions.begin() + i);
+            return true;
+        }
+    }
+    return false;
 }
 
 } // namespace nvogl
