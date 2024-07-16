@@ -5,14 +5,20 @@
 #include "util.h"
 #include "window.h"
 
+#include <GL/glext.h>
 #include <vector>
 
 namespace nvogl {
-GLWindowConfig::GLWindowConfig(int width, int height, const char *title)
-    : Width(width), Height(height), Title(title), Resizable(false),
-      Visible(true) {}
+static void _debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length,
+                            const GLchar *message, const void *user_param);
 
-static void frameResizeCallback(GLFWwindow *window, int width, int height) {
+GLWindowConfig::GLWindowConfig(int width, int height, const char *title)
+    : Width(width), Height(height), Title(title), Resizable(false), Visible(true)
+{
+}
+
+static void frameResizeCallback(GLFWwindow *window, int width, int height)
+{
     (void)window;
     glViewport(0, 0, width, height);
     LogDebug("RESIZE: (%d, %d)", width, height);
@@ -20,10 +26,11 @@ static void frameResizeCallback(GLFWwindow *window, int width, int height) {
 
 static std::vector<KeyActionInfo> keyActions{};
 // TODO: handle modifiers like caps lock
-static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    (void) window;
-    (void) mods;
-    (void) scancode;
+static void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
+{
+    (void)window;
+    (void)mods;
+    (void)scancode;
 
     KeyActionInfo ka;
     switch (action) {
@@ -34,13 +41,13 @@ static void keyCallback(GLFWwindow* window, int key, int scancode, int action, i
             ka.action = Action::Release;
             break;
     }
-    ka.key = (Key) key;
+    ka.key = (Key)key;
     keyActions.push_back(ka);
 }
 
 GLWindow::GLWindow(GLWindowConfig config)
-    : m_Width(config.Width), m_Height(config.Height),
-      m_Title(config.Title), m_Window(nullptr) {
+    : m_Width(config.Width), m_Height(config.Height), m_Title(config.Title), m_Window(nullptr)
+{
     if (glfwInit() != GLFW_TRUE) {
         LogFatal("Unable to initialize glfw");
     }
@@ -91,40 +98,69 @@ GLWindow::GLWindow(GLWindowConfig config)
     // glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+    glad_glDebugMessageCallback(_debug_callback, NULL);
 }
 
-GLWindow::~GLWindow() {
+GLWindow::~GLWindow()
+{
     glfwDestroyWindow(m_Window);
     glfwTerminate();
 }
 
-const char *GLWindow::GetTitle() const { return m_Title; }
+const char *GLWindow::GetTitle() const
+{
+    return m_Title;
+}
 
-int GLWindow::GetWidth() const { return m_Width; }
-void GLWindow::SetWidth(int newWidth) { m_Width = newWidth; }
+int GLWindow::GetWidth() const
+{
+    return m_Width;
+}
+void GLWindow::SetWidth(int newWidth)
+{
+    m_Width = newWidth;
+}
 
-int GLWindow::GetHeight() const { return m_Height; }
-void GLWindow::SetHeight(int newHeight) { m_Height = newHeight; }
+int GLWindow::GetHeight() const
+{
+    return m_Height;
+}
+void GLWindow::SetHeight(int newHeight)
+{
+    m_Height = newHeight;
+}
 
-Vec2 GLWindow::GetMousePosition() const {
+Vec2 GLWindow::GetMousePosition() const
+{
     double x, y;
     glfwGetCursorPos(m_Window, &x, &y);
     return Vec2(x, y);
 }
 
-Vec2i GLWindow::GetDimensions() const { return Vec2i(m_Width, m_Height); }
+Vec2i GLWindow::GetDimensions() const
+{
+    return Vec2i(m_Width, m_Height);
+}
 
-bool GLWindow::WindowShouldClose() const {
+bool GLWindow::WindowShouldClose() const
+{
     return static_cast<bool>(glfwWindowShouldClose(m_Window));
 }
 
-GLFWwindow *GLWindow::GetWindowHandle() const { return m_Window; }
+GLFWwindow *GLWindow::GetWindowHandle() const
+{
+    return m_Window;
+}
 
-double GLWindow::GetGLFWTime() const {
+double GLWindow::GetGLFWTime() const
+{
     return glfwGetTime();
 }
 
-bool GLWindow::IsKeyPressed(Key key) const {
+bool GLWindow::IsKeyPressed(Key key) const
+{
     for (size_t i = 0; i < keyActions.size(); i++) {
         const KeyActionInfo ka = keyActions[i];
         if (ka.key == key && ka.action == Action::Press) {
@@ -133,6 +169,32 @@ bool GLWindow::IsKeyPressed(Key key) const {
         }
     }
     return false;
+}
+
+static void _debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length,
+                            const GLchar *message, const void *userParam)
+{
+    (void)source;
+    (void)id;
+    (void)length;
+    (void)userParam;
+    const char *severity_str;
+    switch (severity) {
+        case GL_DEBUG_SEVERITY_HIGH:
+            severity_str = "high";
+            break;
+        case GL_DEBUG_SEVERITY_MEDIUM:
+            severity_str = "medium";
+            break;
+        case GL_DEBUG_SEVERITY_LOW:
+            severity_str = "low";
+            break;
+        default:
+            severity_str = "unknown";
+            break;
+    }
+    LogError("[%s] GL CALLBACK: type = 0x%x, severity = %s, message = '%s'\n",
+           (type == GL_DEBUG_TYPE_ERROR ? "GL ERROR" : ""), type, severity_str, message);
 }
 
 } // namespace nvogl
