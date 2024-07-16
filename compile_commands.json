@@ -1,0 +1,42 @@
+[
+{
+  "directory": "/home/michabay/projects/Velocity-CPP/build",
+  "command": "/usr/bin/g++  -I/home/michabay/projects/Velocity-CPP/testapp/include -I/home/michabay/projects/Velocity-CPP/engine/OpenGL/vendor/include -I/home/michabay/projects/Velocity-CPP/engine/OpenGL/src/include -I/home/michabay/projects/Velocity-CPP/engine/util  -Wall -Wextra -pedantic -g -std=gnu++14 -o CMakeFiles/velocity_cpp.dir/testapp/main.cpp.o -c /home/michabay/projects/Velocity-CPP/testapp/main.cpp",
+  "file": "/home/michabay/projects/Velocity-CPP/testapp/main.cpp"
+},
+{
+  "directory": "/home/michabay/projects/Velocity-CPP/build/engine",
+  "command": "/usr/bin/g++  -I/home/michabay/projects/Velocity-CPP/engine/OpenGL/vendor/include -I/home/michabay/projects/Velocity-CPP/engine/OpenGL/src/include -I/home/michabay/projects/Velocity-CPP/engine/util  -Wall -Wextra -pedantic -g -std=gnu++14 -o CMakeFiles/engine.dir/OpenGL/src/renderer.cpp.o -c /home/michabay/projects/Velocity-CPP/engine/OpenGL/src/renderer.cpp",
+  "file": "/home/michabay/projects/Velocity-CPP/engine/OpenGL/src/renderer.cpp"
+},
+{
+  "directory": "/home/michabay/projects/Velocity-CPP/build/engine",
+  "command": "/usr/bin/g++  -I/home/michabay/projects/Velocity-CPP/engine/OpenGL/vendor/include -I/home/michabay/projects/Velocity-CPP/engine/OpenGL/src/include -I/home/michabay/projects/Velocity-CPP/engine/util  -Wall -Wextra -pedantic -g -std=gnu++14 -o CMakeFiles/engine.dir/OpenGL/src/shader.cpp.o -c /home/michabay/projects/Velocity-CPP/engine/OpenGL/src/shader.cpp",
+  "file": "/home/michabay/projects/Velocity-CPP/engine/OpenGL/src/shader.cpp"
+},
+{
+  "directory": "/home/michabay/projects/Velocity-CPP/build/engine",
+  "command": "/usr/bin/g++  -I/home/michabay/projects/Velocity-CPP/engine/OpenGL/vendor/include -I/home/michabay/projects/Velocity-CPP/engine/OpenGL/src/include -I/home/michabay/projects/Velocity-CPP/engine/util  -Wall -Wextra -pedantic -g -std=gnu++14 -o CMakeFiles/engine.dir/OpenGL/src/window.cpp.o -c /home/michabay/projects/Velocity-CPP/engine/OpenGL/src/window.cpp",
+  "file": "/home/michabay/projects/Velocity-CPP/engine/OpenGL/src/window.cpp"
+},
+{
+  "directory": "/home/michabay/projects/Velocity-CPP/build/engine",
+  "command": "/usr/bin/g++  -I/home/michabay/projects/Velocity-CPP/engine/OpenGL/vendor/include -I/home/michabay/projects/Velocity-CPP/engine/OpenGL/src/include -I/home/michabay/projects/Velocity-CPP/engine/util  -Wall -Wextra -pedantic -g -std=gnu++14 -o CMakeFiles/engine.dir/OpenGL/src/texture.cpp.o -c /home/michabay/projects/Velocity-CPP/engine/OpenGL/src/texture.cpp",
+  "file": "/home/michabay/projects/Velocity-CPP/engine/OpenGL/src/texture.cpp"
+},
+{
+  "directory": "/home/michabay/projects/Velocity-CPP/build/engine",
+  "command": "/usr/bin/cc  -I/home/michabay/projects/Velocity-CPP/engine/OpenGL/vendor/include -I/home/michabay/projects/Velocity-CPP/engine/OpenGL/src/include -I/home/michabay/projects/Velocity-CPP/engine/util -g -o CMakeFiles/engine.dir/OpenGL/vendor/glad.c.o -c /home/michabay/projects/Velocity-CPP/engine/OpenGL/vendor/glad.c",
+  "file": "/home/michabay/projects/Velocity-CPP/engine/OpenGL/vendor/glad.c"
+},
+{
+  "directory": "/home/michabay/projects/Velocity-CPP/build/engine",
+  "command": "/usr/bin/g++  -I/home/michabay/projects/Velocity-CPP/engine/OpenGL/vendor/include -I/home/michabay/projects/Velocity-CPP/engine/OpenGL/src/include -I/home/michabay/projects/Velocity-CPP/engine/util  -Wall -Wextra -pedantic -g -std=gnu++14 -o CMakeFiles/engine.dir/util/logger.cpp.o -c /home/michabay/projects/Velocity-CPP/engine/util/logger.cpp",
+  "file": "/home/michabay/projects/Velocity-CPP/engine/util/logger.cpp"
+},
+{
+  "directory": "/home/michabay/projects/Velocity-CPP/build/engine",
+  "command": "/usr/bin/g++  -I/home/michabay/projects/Velocity-CPP/engine/OpenGL/vendor/include -I/home/michabay/projects/Velocity-CPP/engine/OpenGL/src/include -I/home/michabay/projects/Velocity-CPP/engine/util  -Wall -Wextra -pedantic -g -std=gnu++14 -o CMakeFiles/engine.dir/util/util.cpp.o -c /home/michabay/projects/Velocity-CPP/engine/util/util.cpp",
+  "file": "/home/michabay/projects/Velocity-CPP/engine/util/util.cpp"
+}
+]
