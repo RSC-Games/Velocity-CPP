@@ -7,21 +7,41 @@
 #define INFO_LOG_BUF_LEN 512
 
 namespace nvogl {
-static const char *DEFAULT_VERT_PATH = "../resources/shader/texture.vert";
-static const char *DEFAULT_FRAG_PATH = "../resources/shader/texture.frag";
+static const char *DEFAULT_TEXTURE_VERT_PATH = "../resources/shader/texture.vert";
+static const char *DEFAULT_TEXTURE_FRAG_PATH = "../resources/shader/texture.frag";
+static const char *DEFAULT_PRIMITIVE_VERT_PATH = "../resources/shader/primitive.vert";
+static const char *DEFAULT_PRIMITIVE_FRAG_PATH = "../resources/shader/primitive.frag";
 
 GLShader::GLShader() : m_ProgramId(0) {}
 
-GLShader::~GLShader() { glDeleteProgram(m_ProgramId); }
+GLShader::~GLShader()
+{
+    glDeleteProgram(m_ProgramId);
+}
+
+GLShader GLShader::LoadPrimitiveDefault()
+{
+    GLShader shader = GLShader();
+    shader.Load(DEFAULT_PRIMITIVE_VERT_PATH, DEFAULT_PRIMITIVE_FRAG_PATH);
+    return shader;
+}
+
+GLShader GLShader::LoadTextureDefault()
+{
+    GLShader shader = GLShader();
+    shader.Load(DEFAULT_TEXTURE_VERT_PATH, DEFAULT_TEXTURE_FRAG_PATH);
+    return shader;
+}
 
 static char *readEntireFile(const char *path);
-void GLShader::LoadDefaults() {
+bool GLShader::Load(const char *vertex_path, const char *fragment_path)
+{
     bool compiled = true, linked = true;
 
     GLint success;
     char info_log_buffer[INFO_LOG_BUF_LEN] = {0};
-    char *vertex_source = readEntireFile(DEFAULT_VERT_PATH);
-    int vertex_id = glCreateShader(GL_VERTEX_SHADER);
+    char *vertex_source = readEntireFile(vertex_path);
+    GLuint vertex_id = glCreateShader(GL_VERTEX_SHADER);
     if (vertex_id == 0) {
         LogFatal("Unable to create vertex shader id");
     }
@@ -39,8 +59,8 @@ void GLShader::LoadDefaults() {
     }
 
     memset(info_log_buffer, 0, INFO_LOG_BUF_LEN);
-    char *fragment_source = readEntireFile(DEFAULT_FRAG_PATH);
-    int fragment_id = glCreateShader(GL_FRAGMENT_SHADER);
+    char *fragment_source = readEntireFile(fragment_path);
+    GLuint fragment_id = glCreateShader(GL_FRAGMENT_SHADER);
     if (fragment_id == 0) {
         LogFatal("Unable to create fragment shader id");
     }
@@ -50,8 +70,7 @@ void GLShader::LoadDefaults() {
 
     glGetShaderiv(fragment_id, GL_COMPILE_STATUS, &success);
     if (!success) {
-        glGetShaderInfoLog(fragment_id, INFO_LOG_BUF_LEN, NULL,
-                           info_log_buffer);
+        glGetShaderInfoLog(fragment_id, INFO_LOG_BUF_LEN, NULL, info_log_buffer);
         LogError("Fragment shader error: %s", info_log_buffer);
         compiled = false;
     } else {
@@ -69,8 +88,7 @@ void GLShader::LoadDefaults() {
     memset(info_log_buffer, 0, INFO_LOG_BUF_LEN);
     glGetProgramiv(shader_program_id, GL_LINK_STATUS, &success);
     if (!success) {
-        glGetProgramInfoLog(shader_program_id, INFO_LOG_BUF_LEN, NULL,
-                            info_log_buffer);
+        glGetProgramInfoLog(shader_program_id, INFO_LOG_BUF_LEN, NULL, info_log_buffer);
         LogError("Shader link error: %s", info_log_buffer);
         linked = false;
     } else {
@@ -89,15 +107,24 @@ void GLShader::LoadDefaults() {
         m_ProgramId = shader_program_id;
     } else {
         LogFatal("Couldn't load default shaders");
+        return false;
     }
+    return true;
 }
 
-void GLShader::Bind() const { glUseProgram(m_ProgramId); }
+void GLShader::Bind() const
+{
+    glUseProgram(m_ProgramId);
+}
 
-int GLShader::GetProgramId() const { return m_ProgramId;}
+int GLShader::GetProgramId() const
+{
+    return m_ProgramId;
+}
 
 // WARNING: This function allocates memory
-static char *readEntireFile(const char *path) {
+static char *readEntireFile(const char *path)
+{
     FILE *f = fopen(path, "r");
     if (f == NULL) {
         LogFatal("Unable to locate '%s'\n", path);

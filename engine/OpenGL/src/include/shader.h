@@ -1,12 +1,5 @@
 #pragma once
 
-#if WIN32
-#include "glfw-win/glfw3.h"
-#else
-#include "glfw-linux/glfw3.h"
-#endif
-
-
 namespace nvogl {
 struct GLShader {
     int m_ProgramId;
@@ -14,8 +7,11 @@ struct GLShader {
     GLShader();
     ~GLShader();
 
-    void LoadDefaults();
+    bool Load(const char *vertex_path, const char *fragment_path);
     void Bind() const;
     int GetProgramId() const;
+
+    static GLShader LoadPrimitiveDefault();
+    static GLShader LoadTextureDefault();
 };
 } // namespace nvogl
