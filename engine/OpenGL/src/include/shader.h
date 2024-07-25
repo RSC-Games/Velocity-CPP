@@ -1,8 +1,10 @@
 #pragma once
 
+#include "gl_objects.h"
+
 namespace nvogl {
 struct GLShader {
-    int m_ProgramId;
+    GLuint m_ProgramId;
 
     GLShader();
     ~GLShader();

@@ -8,6 +8,7 @@ cmake_minimum_required(VERSION 3.5)
 project(engine)
 
 set(SOURCES
+    OpenGL/src/gl_objects.cpp
     OpenGL/src/renderer.cpp
     OpenGL/src/shader.cpp
     OpenGL/src/window.cpp

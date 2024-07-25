@@ -1,5 +1,6 @@
 #pragma once
 
+#include "gl_objects.h"
 #include "shader.h"
 #include "texture.h"
 #include "window.h"
@@ -28,7 +29,9 @@ struct VertexInfo {
 };
 
 struct RenderData {
-    unsigned int quadVao, quadVbo, quadIbo;
+    VAO quadVao;
+    VBO quadVbo;
+    unsigned int quadIbo;
 
     // Quad information
     VertexInfo *verts;
@@ -56,7 +59,7 @@ class GLRenderer {
     void Present(GLWindow& window);
 
   private:
-    void setup();
+    void textureSetup();
     void batchBegin();
     void batchEnd();
     void batchFlush();
@@ -64,7 +67,8 @@ class GLRenderer {
 
     int m_Width;
     int m_Height;
-    GLShader m_Shader;
+    // GLShader m_PrimitiveShader;
+    GLShader m_TextureShader;
     RenderData rd;
 };
 } // namespace nvogl

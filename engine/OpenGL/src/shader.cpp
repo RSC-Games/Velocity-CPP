@@ -34,77 +34,32 @@ GLShader GLShader::LoadTextureDefault()
 }
 
 static char *readEntireFile(const char *path);
+static bool compileShader(const char *source, bool is_vertex, GLuint *id);
+static bool linkShader(GLuint vertex_id, GLuint fragment_id, GLuint *id);
 bool GLShader::Load(const char *vertex_path, const char *fragment_path)
 {
-    bool compiled = true, linked = true;
+    bool v_compiled, f_compiled, p_linked = true;
+    GLuint v_id, f_id, p_id;
 
-    GLint success;
-    char info_log_buffer[INFO_LOG_BUF_LEN] = {0};
+
     char *vertex_source = readEntireFile(vertex_path);
-    GLuint vertex_id = glCreateShader(GL_VERTEX_SHADER);
-    if (vertex_id == 0) {
-        LogFatal("Unable to create vertex shader id");
-    }
-    // TODO: handle 'null' cases of the shader id
-    glShaderSource(vertex_id, 1, &vertex_source, NULL);
-    glCompileShader(vertex_id);
+    v_compiled = compileShader(vertex_source, true, &v_id);
 
-    glGetShaderiv(vertex_id, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(vertex_id, INFO_LOG_BUF_LEN, NULL, info_log_buffer);
-        LogError("Vertex shader error: %s", info_log_buffer);
-        compiled = false;
-    } else {
-        LogDebug("Successfully compiled vertex shaders");
-    }
-
-    memset(info_log_buffer, 0, INFO_LOG_BUF_LEN);
     char *fragment_source = readEntireFile(fragment_path);
-    GLuint fragment_id = glCreateShader(GL_FRAGMENT_SHADER);
-    if (fragment_id == 0) {
-        LogFatal("Unable to create fragment shader id");
-    }
-    // TODO: handle 'null' cases of the shader id
-    glShaderSource(fragment_id, 1, &fragment_source, NULL);
-    glCompileShader(fragment_id);
+    f_compiled = compileShader(fragment_source, false, &f_id);
 
-    glGetShaderiv(fragment_id, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(fragment_id, INFO_LOG_BUF_LEN, NULL, info_log_buffer);
-        LogError("Fragment shader error: %s", info_log_buffer);
-        compiled = false;
-    } else {
-        LogDebug("Successfully compiled fragment shaders");
-    }
-
-    int shader_program_id = glCreateProgram();
-    if (shader_program_id == 0) {
-        LogFatal("Unable to create shader program");
-    }
-    glAttachShader(shader_program_id, vertex_id);
-    glAttachShader(shader_program_id, fragment_id);
-    glLinkProgram(shader_program_id);
-
-    memset(info_log_buffer, 0, INFO_LOG_BUF_LEN);
-    glGetProgramiv(shader_program_id, GL_LINK_STATUS, &success);
-    if (!success) {
-        glGetProgramInfoLog(shader_program_id, INFO_LOG_BUF_LEN, NULL, info_log_buffer);
-        LogError("Shader link error: %s", info_log_buffer);
-        linked = false;
-    } else {
-        LogDebug("Successfully linked shaders");
-    }
+    linkShader(v_id, f_id, &p_id);
 
     // Shader have to be deleted before sources' memory are freed
-    glDeleteShader(vertex_id);
-    glDeleteShader(fragment_id);
+    glDeleteShader(v_id);
+    glDeleteShader(f_id);
 
     delete[] vertex_source;
     delete[] fragment_source;
 
-    if (compiled && linked) {
+    if (v_compiled && f_compiled && p_linked) {
         LogInfo("Intialized default shader");
-        m_ProgramId = shader_program_id;
+        m_ProgramId = p_id;
     } else {
         LogFatal("Couldn't load default shaders");
         return false;
@@ -120,6 +75,54 @@ void GLShader::Bind() const
 int GLShader::GetProgramId() const
 {
     return m_ProgramId;
+}
+
+static bool compileShader(const char *source, bool is_vertex, GLuint *id)
+{
+    GLint success;
+    char info_log_buffer[INFO_LOG_BUF_LEN] = {0};
+    GLuint _id = glCreateShader(is_vertex ? GL_VERTEX_SHADER : GL_FRAGMENT_SHADER);
+    if (_id == 0) {
+        LogFatal("Unable to create %s shader id", is_vertex ? "vertex" : "fragment");
+    }
+    // TODO: handle 'null' cases of the shader id
+    glShaderSource(_id, 1, &source, NULL);
+    glCompileShader(_id);
+
+    glGetShaderiv(_id, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        glGetShaderInfoLog(_id, INFO_LOG_BUF_LEN, NULL, info_log_buffer);
+        LogError("%s shader error: %s", is_vertex ? "Vertex" : "Fragment", info_log_buffer);
+        return false;
+    }
+    LogDebug("Successfully compiled vertex shaders");
+    *id = _id;
+    return true;
+}
+
+static bool linkShader(GLuint vertex_id, GLuint fragment_id, GLuint *id)
+{
+    GLint success;
+    char info_log_buffer[INFO_LOG_BUF_LEN] = {0};
+
+    GLuint _id = glCreateProgram();
+    if (_id == 0) {
+        LogFatal("Unable to create shader program");
+    }
+    glAttachShader(_id, vertex_id);
+    glAttachShader(_id, fragment_id);
+    glLinkProgram(_id);
+
+    memset(info_log_buffer, 0, INFO_LOG_BUF_LEN);
+    glGetProgramiv(_id, GL_LINK_STATUS, &success);
+    if (!success) {
+        glGetProgramInfoLog(_id, INFO_LOG_BUF_LEN, NULL, info_log_buffer);
+        LogError("Shader link error: %s", info_log_buffer);
+        return false;
+    }
+    LogDebug("Successfully linked shaders");
+    *id = _id;
+    return true;
 }
 
 // WARNING: This function allocates memory
@@ -143,4 +146,5 @@ static char *readEntireFile(const char *path)
 
     return result;
 }
+
 } // namespace nvogl

@@ -100,7 +100,7 @@ GLWindow::GLWindow(GLWindowConfig config)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-    glad_glDebugMessageCallback(_debug_callback, NULL);
+    glDebugMessageCallback(_debug_callback, NULL);
 }
 
 GLWindow::~GLWindow()
@@ -193,7 +193,7 @@ static void _debug_callback(GLenum source, GLenum type, GLuint id, GLenum severi
             severity_str = "unknown";
             break;
     }
-    LogError("[%s] GL CALLBACK: type = 0x%x, severity = %s, message = '%s'\n",
+    LogError("[%s] GL CALLBACK: type = 0x%x, severity = %s, message = '%s'",
            (type == GL_DEBUG_TYPE_ERROR ? "GL ERROR" : ""), type, severity_str, message);
 }
 

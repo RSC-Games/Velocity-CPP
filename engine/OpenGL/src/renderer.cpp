@@ -1,3 +1,4 @@
+#include "gl_objects.h"
 #include "glad/glad.h"
 #include "glfw-linux/glfw3.h"
 #include "glm/ext/vector_float3.hpp"
@@ -8,7 +9,7 @@
 #include "util.h"
 
 namespace nvogl {
-const int MAX_QUAD_COUNT = 20;
+const int MAX_QUAD_COUNT = 200;
 const int MAXIMUM_VERTEX_COUNT = MAX_QUAD_COUNT * 4;
 const int MAXIMUM_INDEX_COUNT = MAX_QUAD_COUNT * 6;
 
@@ -16,33 +17,27 @@ const int MAXIMUM_INDEX_COUNT = MAX_QUAD_COUNT * 6;
 const int NO_TEXTURE = 0;
 const int MAX_TEXTURE_UNIT_COUNT = 32;
 
-GLRenderer::GLRenderer(int width, int height)
-    : m_Width(width), m_Height(height) {
-    m_Shader.LoadDefaults();
-    setup();
-    m_Shader.Bind();
-
-    int samplers[MAX_TEXTURE_UNIT_COUNT];
-    for (int i = 0; i < MAX_TEXTURE_UNIT_COUNT; i++)
-        samplers[i] = i;
-    // TODO: passing uniform should be implemented into the shader class
-    int loc = glGetUniformLocation(m_Shader.GetProgramId(), "u_Textures");
-    glUniform1iv(loc, MAX_TEXTURE_UNIT_COUNT, samplers);
+GLRenderer::GLRenderer(int width, int height) : m_Width(width), m_Height(height)
+{
+    // m_PrimitiveShader = GLShader::LoadPrimitiveDefault();
+    m_TextureShader = GLShader::LoadTextureDefault();
+    textureSetup();
 }
 
-GLRenderer::~GLRenderer() {
+GLRenderer::~GLRenderer()
+{
     delete[] rd.verts;
     delete[] rd.textureSlots;
 }
 
-glm::vec3 GLRenderer::vec3ToNDC(glm::vec3 v) {
-    return glm::vec3(v.x / (float)m_Width * 2 - 1,
-                     -(v.y / (float)m_Height * 2 - 1), v.z);
+glm::vec3 GLRenderer::vec3ToNDC(glm::vec3 v)
+{
+    return glm::vec3(v.x / (float)m_Width * 2 - 1, -(v.y / (float)m_Height * 2 - 1), v.z);
 }
 
-void GLRenderer::DrawTexture(GLTexture tex, int x, int y, int w, int h) {
-    if (rd.indexCount >= MAXIMUM_INDEX_COUNT ||
-        rd.textureNextSlot > MAX_TEXTURE_UNIT_COUNT - 1) {
+void GLRenderer::DrawTexture(GLTexture tex, int x, int y, int w, int h)
+{
+    if (rd.indexCount >= MAXIMUM_INDEX_COUNT || rd.textureNextSlot > MAX_TEXTURE_UNIT_COUNT - 1) {
         batchEnd();
         batchFlush();
         batchBegin();
@@ -64,8 +59,7 @@ void GLRenderer::DrawTexture(GLTexture tex, int x, int y, int w, int h) {
     }
 
     Color c = Color::White();
-    glm::vec4 norm =
-        glm::vec4(c.R / 255.0f, c.G / 255.0f, c.B / 255.0f, c.A / 255.0f);
+    glm::vec4 norm = glm::vec4(c.R / 255.0f, c.G / 255.0f, c.B / 255.0f, c.A / 255.0f);
     size_t *size = &rd.vertCount;
 
     glm::vec3 topLeft = vec3ToNDC({x, y, 0.0f});
@@ -80,28 +74,26 @@ void GLRenderer::DrawTexture(GLTexture tex, int x, int y, int w, int h) {
     LogDebug("\tBot right: (%.1f, %.1f)", botRight.x, botRight.y);
 
     // Top left corner
-    rd.verts[(*size)++] =
-        VertexInfo(topLeft, norm, {0.0f, 1.0f}, texture_index);
+    rd.verts[(*size)++] = VertexInfo(topLeft, norm, {0.0f, 1.0f}, texture_index);
     // Bottom left corner
-    rd.verts[(*size)++] =
-        VertexInfo(botLeft, norm, {0.0f, 0.0f}, texture_index);
+    rd.verts[(*size)++] = VertexInfo(botLeft, norm, {0.0f, 0.0f}, texture_index);
     // Bottom right corner
-    rd.verts[(*size)++] =
-        VertexInfo(botRight, norm, {1.0f, 0.0f}, texture_index);
+    rd.verts[(*size)++] = VertexInfo(botRight, norm, {1.0f, 0.0f}, texture_index);
     // Top right corner
-    rd.verts[(*size)++] =
-        VertexInfo(topRight, norm, {1.0f, 1.0f}, texture_index);
+    rd.verts[(*size)++] = VertexInfo(topRight, norm, {1.0f, 1.0f}, texture_index);
     rd.indexCount += 6;
     rd.stat.quadCounter++;
 }
 
-void GLRenderer::Clear(Color color) {
-    glClearColor((float)color.R / 255.0f, (float)color.G / 255.0f,
-                 (float)color.B / 255.0f, (float)color.A / 255.0f);
+void GLRenderer::Clear(Color color)
+{
+    glClearColor((float)color.R / 255.0f, (float)color.G / 255.0f, (float)color.B / 255.0f,
+                 (float)color.A / 255.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void GLRenderer::Present(GLWindow& window) {
+void GLRenderer::Present(GLWindow& window)
+{
     if (rd.indexCount > 0) {
         batchEnd();
         batchFlush();
@@ -112,14 +104,15 @@ void GLRenderer::Present(GLWindow& window) {
     glfwPollEvents();
 }
 
-void GLRenderer::setup() {
-    glGenVertexArrays(1, &rd.quadVao);
-    glBindVertexArray(rd.quadVao);
+void GLRenderer::textureSetup()
+{
+    rd = RenderData();
+    rd.quadVao = VAO::Create();
+    VAO::Bind(rd.quadVao);
 
-    glGenBuffers(1, &rd.quadVbo);
-    glBindBuffer(GL_ARRAY_BUFFER, rd.quadVbo);
-    glBufferData(GL_ARRAY_BUFFER, MAXIMUM_VERTEX_COUNT * sizeof(VertexInfo),
-                 NULL, GL_DYNAMIC_DRAW);
+    rd.quadVbo = VBO::Create(VBOType::ArrayBuffer);
+    VBO::SetData(rd.quadVbo, true, NULL, MAXIMUM_VERTEX_COUNT * sizeof(VertexInfo));
+    VBO::Bind(rd.quadVbo);
 
     rd.verts = new VertexInfo[MAXIMUM_VERTEX_COUNT];
 
@@ -138,8 +131,8 @@ void GLRenderer::setup() {
     }
     glGenBuffers(1, &rd.quadIbo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rd.quadIbo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, MAXIMUM_INDEX_COUNT * sizeof(int),
-                 indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, MAXIMUM_INDEX_COUNT * sizeof(int), indices,
+                 GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexInfo),
                           (void *)offsetof(VertexInfo, Position));
@@ -172,28 +165,40 @@ void GLRenderer::setup() {
     glGenTextures(1, &whiteTex);
     glBindTexture(GL_TEXTURE_2D, whiteTex);
     // set the texture wrapping parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
-                    GL_CLAMP_TO_EDGE); // set texture wrapping to GL_REPEAT
-                                       // (default wrapping method)
+    // set texture wrapping to GL_REPEAT (default wrapping method)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     // set texture filtering parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     int color = 0xffffffff;
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                 &color);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &color);
     glGenerateMipmap(GL_TEXTURE_2D);
 
     rd.textureSlots[NO_TEXTURE] = whiteTex;
     for (int i = 1; i < MAX_TEXTURE_UNIT_COUNT; i++)
         rd.textureSlots[i] = 0;
     rd.textureNextSlot = 1;
+
+    m_TextureShader.Bind();
+    LogInfo("Shader (id = %d) bound!", m_TextureShader.GetProgramId());
+
+    int samplers[MAX_TEXTURE_UNIT_COUNT];
+    for (int i = 0; i < MAX_TEXTURE_UNIT_COUNT; i++)
+        samplers[i] = i;
+    // TODO: passing uniform should be implemented into the shader class
+    int loc = glGetUniformLocation(m_TextureShader.GetProgramId(), "u_Textures");
+    glUniform1iv(loc, MAX_TEXTURE_UNIT_COUNT, samplers);
 }
 
-void GLRenderer::batchBegin() { rd.vertCount = 0; }
+void GLRenderer::batchBegin()
+{
+    rd.vertCount = 0;
+}
 
-void GLRenderer::batchFlush() {
+void GLRenderer::batchFlush()
+{
     for (size_t i = 0; i < rd.textureNextSlot; i++) {
         glActiveTexture(GL_TEXTURE0 + i);
         glBindTexture(GL_TEXTURE_2D, rd.textureSlots[i]);
@@ -201,7 +206,7 @@ void GLRenderer::batchFlush() {
         // glBindTextureUnit(i, s);
     }
 
-    glBindVertexArray(rd.quadVao);
+    VAO::Bind(rd.quadVao);
     glDrawElements(GL_TRIANGLES, rd.indexCount, GL_UNSIGNED_INT, nullptr);
     // Update needed stats
     rd.stat.drawCounter++;
@@ -211,15 +216,15 @@ void GLRenderer::batchFlush() {
     rd.textureNextSlot = 1;
 }
 
-void GLRenderer::batchEnd() {
-    glBindBuffer(GL_ARRAY_BUFFER, rd.quadVbo);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, rd.vertCount * sizeof(VertexInfo),
-                    rd.verts);
+void GLRenderer::batchEnd()
+{
+    VBO::Bind(rd.quadVbo);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, rd.vertCount * sizeof(VertexInfo), rd.verts);
 }
 
-VertexInfo::VertexInfo(glm::vec3 pos, glm::vec4 color, glm::vec2 tex_coords,
-                       float texture_index)
-    : Position(pos), Color(color), TexCoords(tex_coords),
-      TextureIndex(texture_index) {}
+VertexInfo::VertexInfo(glm::vec3 pos, glm::vec4 color, glm::vec2 tex_coords, float texture_index)
+    : Position(pos), Color(color), TexCoords(tex_coords), TextureIndex(texture_index)
+{
+}
 
 } // namespace nvogl
