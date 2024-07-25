@@ -13,7 +13,7 @@ struct GLShader {
     void Bind() const;
     int GetProgramId() const;
 
-    static GLShader LoadPrimitiveDefault();
-    static GLShader LoadTextureDefault();
+    static void LoadPrimitiveDefault(GLShader& shader);
+    static void LoadTextureDefault(GLShader& shader);
 };
 } // namespace nvogl

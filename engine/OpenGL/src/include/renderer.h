@@ -59,7 +59,7 @@ class GLRenderer {
     void Present(GLWindow& window);
 
   private:
-    void textureSetup();
+    void textureShaderSetup();
     void batchBegin();
     void batchEnd();
     void batchFlush();

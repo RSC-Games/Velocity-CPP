@@ -19,9 +19,9 @@ const int MAX_TEXTURE_UNIT_COUNT = 32;
 
 GLRenderer::GLRenderer(int width, int height) : m_Width(width), m_Height(height)
 {
-    // m_PrimitiveShader = GLShader::LoadPrimitiveDefault();
-    m_TextureShader = GLShader::LoadTextureDefault();
-    textureSetup();
+    // GLShader::LoadPrimitiveDefault(m_PrimitiveShader);
+    GLShader::LoadTextureDefault(m_TextureShader);
+    textureShaderSetup();
 }
 
 GLRenderer::~GLRenderer()
@@ -104,7 +104,7 @@ void GLRenderer::Present(GLWindow& window)
     glfwPollEvents();
 }
 
-void GLRenderer::textureSetup()
+void GLRenderer::textureShaderSetup()
 {
     rd = RenderData();
     rd.quadVao = VAO::Create();

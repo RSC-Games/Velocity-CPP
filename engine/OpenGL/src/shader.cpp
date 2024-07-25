@@ -20,21 +20,18 @@ GLShader::GLShader() : m_ProgramId(0) {}
 
 GLShader::~GLShader()
 {
+    LogInfo("Here");
     glDeleteProgram(m_ProgramId);
 }
 
-GLShader GLShader::LoadPrimitiveDefault()
+void GLShader::LoadPrimitiveDefault(GLShader& shader)
 {
-    GLShader shader = GLShader();
     shader.Load(DEFAULT_PRIMITIVE_VERT_PATH, DEFAULT_PRIMITIVE_FRAG_PATH);
-    return shader;
 }
 
-GLShader GLShader::LoadTextureDefault()
+void GLShader::LoadTextureDefault(GLShader& shader)
 {
-    GLShader shader = GLShader();
     shader.Load(DEFAULT_TEXTURE_VERT_PATH, DEFAULT_TEXTURE_FRAG_PATH);
-    return shader;
 }
 
 static std::string readEntireFile(const char *path);
@@ -59,7 +56,7 @@ bool GLShader::Load(const char *vertex_path, const char *fragment_path)
     glDeleteShader(f_id);
 
     if (v_compiled && f_compiled && p_linked) {
-        LogInfo("Intialized default shader");
+        LogInfo("Initialized default shader");
         m_ProgramId = p_id;
     } else {
         LogFatal("Couldn't load default shaders");
