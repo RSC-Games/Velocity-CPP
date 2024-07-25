@@ -1,8 +1,12 @@
+#include <cstdio>
+#include <cstring>
+#include <fstream>
+#include <iostream>
+#include <sstream>
+
 #include "glad/glad.h"
 #include "logger.h"
 #include "shader.h"
-#include <cstdio>
-#include <cstring>
 
 #define INFO_LOG_BUF_LEN 512
 
@@ -33,29 +37,26 @@ GLShader GLShader::LoadTextureDefault()
     return shader;
 }
 
-static char *readEntireFile(const char *path);
-static bool compileShader(const char *source, bool is_vertex, GLuint *id);
-static bool linkShader(GLuint vertex_id, GLuint fragment_id, GLuint *id);
+static std::string readEntireFile(const char *path);
+static bool compileShader(const char *source, bool is_vertex, GLuint& id);
+static bool linkShader(GLuint vertex_id, GLuint fragment_id, GLuint& id);
 bool GLShader::Load(const char *vertex_path, const char *fragment_path)
 {
     bool v_compiled, f_compiled, p_linked = true;
     GLuint v_id, f_id, p_id;
 
 
-    char *vertex_source = readEntireFile(vertex_path);
-    v_compiled = compileShader(vertex_source, true, &v_id);
+    std::string vertex_source = readEntireFile(vertex_path);
+    v_compiled = compileShader(vertex_source.c_str(), true, v_id);
 
-    char *fragment_source = readEntireFile(fragment_path);
-    f_compiled = compileShader(fragment_source, false, &f_id);
+    std::string fragment_source = readEntireFile(fragment_path);
+    f_compiled = compileShader(fragment_source.c_str(), false, f_id);
 
-    linkShader(v_id, f_id, &p_id);
+    linkShader(v_id, f_id, p_id);
 
     // Shader have to be deleted before sources' memory are freed
     glDeleteShader(v_id);
     glDeleteShader(f_id);
-
-    delete[] vertex_source;
-    delete[] fragment_source;
 
     if (v_compiled && f_compiled && p_linked) {
         LogInfo("Intialized default shader");
@@ -77,7 +78,7 @@ int GLShader::GetProgramId() const
     return m_ProgramId;
 }
 
-static bool compileShader(const char *source, bool is_vertex, GLuint *id)
+static bool compileShader(const char *source, bool is_vertex, GLuint& id)
 {
     GLint success;
     char info_log_buffer[INFO_LOG_BUF_LEN] = {0};
@@ -96,11 +97,11 @@ static bool compileShader(const char *source, bool is_vertex, GLuint *id)
         return false;
     }
     LogDebug("Successfully compiled vertex shaders");
-    *id = _id;
+    id = _id;
     return true;
 }
 
-static bool linkShader(GLuint vertex_id, GLuint fragment_id, GLuint *id)
+static bool linkShader(GLuint vertex_id, GLuint fragment_id, GLuint& id)
 {
     GLint success;
     char info_log_buffer[INFO_LOG_BUF_LEN] = {0};
@@ -121,30 +122,17 @@ static bool linkShader(GLuint vertex_id, GLuint fragment_id, GLuint *id)
         return false;
     }
     LogDebug("Successfully linked shaders");
-    *id = _id;
+    id = _id;
     return true;
 }
 
 // WARNING: This function allocates memory
-static char *readEntireFile(const char *path)
+static std::string readEntireFile(const char *path)
 {
-    FILE *f = fopen(path, "r");
-    if (f == NULL) {
-        LogFatal("Unable to locate '%s'\n", path);
-    }
-    fseek(f, 0, SEEK_END);
-    int size = ftell(f);
-    rewind(f);
-
-    // Create a buffer.
-    char *result = new char[size + 1];
-
-    // Read the whole file into the buffer.
-    fread(result, size, 1, f);
-    result[size] = '\0';
-    fclose(f);
-
-    return result;
+    std::stringstream ss;
+    std::ifstream f(path);
+    ss << f.rdbuf();
+    return ss.str();
 }
 
 } // namespace nvogl
